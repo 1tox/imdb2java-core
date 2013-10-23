@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:util="http://www.springframework.org/schema/util" xmlns:lang="http://www.springframework.org/schema/lang" xmlns:aop="http://www.springframework.org/schema/aop"
+   xmlns:tx="http://www.springframework.org/schema/tx"
+   xmlns:task="http://www.springframework.org/schema/task"
+   xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+    ">
+
+   <context:annotation-config />
+   <context:component-scan base-package="com.els" />
+   
+   <!-- Enable @Transactional annotation -->
+   <tx:annotation-driven transaction-manager="transactionManager" />
+   
+   <!-- hibernate session factory -->
+   <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+      <property name="hibernateProperties">
+         <props>
+            <prop key="hibernate.connection.url">${hibernate.connection.url}</prop>
+            <prop key="hibernate.connection.username">${hibernate.connection.username}</prop>
+            <prop key="hibernate.connection.password">${hibernate.connection.password}</prop>
+            <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+            <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+            <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+            <prop key="hibernate.max_fetch_depth">${hibernate.max_fetch_depth}</prop>
+            <prop key="hibernate.default_batch_fetch_size">${hibernate.default_batch_fetch_size}</prop>
+            <prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
+            <prop key="hibernate.use_sql_comments">${hibernate.use_sql_comments}</prop>
+            <prop key="hibernate.c3p0.min_size">${hibernate.c3p0.min_size}</prop>
+            <prop key="hibernate.c3p0.max_size">${hibernate.c3p0.max_size}</prop>
+            <prop key="hibernate.c3p0.timeout">${hibernate.c3p0.timeout}</prop>
+            <prop key="hibernate.c3p0.max_statements">${hibernate.c3p0.max_statements}</prop>
+            <prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+            <prop key="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</prop>
+            <prop key="connection.useUnicode">true</prop>
+            <prop key="connection.characterEncoding">utf-8</prop>
+            <prop key="hibernate.default_entity_mode">pojo</prop>
+            <prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
+            <prop key="hibernate.cache.use_second_level_cache">true</prop>
+            <prop key="hibernate.cache.use_query_cache">true</prop>
+            <!-- <prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory</prop> -->
+            <prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop>
+            <prop key="hibernate.cache.use_minimal_puts">false</prop>
+            <prop key="hibernate.cache.use_structured_cache">false</prop>
+            <prop key="net.sf.ehcache.configurationResourceName">ehcache.xml</prop>
+         </props>
+      </property>
+   </bean>
+   
+	<!-- setup transaction manager -->
+
+   <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+      <property name="sessionFactory">
+         <ref bean="sessionFactory" />
+      </property>
+   </bean>
+   
+   <!-- 
+   <bean id="fuHibernateAspectBean" class="com.els.fu.utils.wicket.models.FuHibernateAspect">
+      <property name="sessionFactory">
+         <ref bean="sessionFactory" />
+      </property>
+      <property name="order" value="1" />
+   </bean>
+
+   <tx:advice id="txAdvice" transaction-manager="transactionManager">
+      <tx:attributes>
+         <tx:method name="*" propagation="REQUIRES_NEW" rollback-for="ServiceException" />
+      </tx:attributes>
+   </tx:advice>
+
+   <aop:config>
+      <aop:pointcut id="fuTransactions" expression="execution(* com.els.fu.service.impl.*.service*(..))" />
+      <aop:advisor advice-ref="txAdvice" pointcut-ref="fuTransactions" order="2" />
+      <aop:aspect id="fuHibernateAspect" ref="fuHibernateAspectBean" order="1">
+         <aop:before pointcut-ref="fuTransactions" method="doFlushModeAuto" />
+         <aop:after-returning pointcut-ref="fuTransactions" method="doFlushModeManual" />
+         <aop:after-throwing pointcut-ref="fuTransactions" method="doFlushModeManual" />
+      </aop:aspect>
+   </aop:config>
+
+    -->
+	<!-- Mail service -->
+   <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+      <property name="host" value="10.100.1.172" />
+      <property name="port" value="25" />
+      <property name="username" value="fichierunique" />
+      <property name="password" value="FichierUnique92" />
+   </bean>
+
+<!--<bean id="facadeMonitoringAdvisor" class="net.bull.javamelody.MonitoringSpringAdvisor">
+    	<property name="pointcut">
+            <bean class="net.bull.javamelody.MonitoredWithInterfacePointcut">
+                 <property name="interfaceName" value="com.els.fu.service.Monitored" />
+            </bean>
+        </property>
+    </bean>-->
+	
+	<bean id = "props" 
+    class = "org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name = "locations" >
+    	<list>
+				<value>classpath:/fu_${FU_ENV}.properties</value>
+				<!--<value>classpath:/qas.properties</value>-->
+				<!-- <value>classpath:/emailValidation.properties</value> -->
+			</list>
+			</property>        
+</bean>
+
+</beans>
