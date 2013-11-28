@@ -7,14 +7,6 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<jetty.version>6.1.4</jetty.version>
-		<jetty.plugin.version>6.1.19</jetty.plugin.version>
-		<org.springframework.version>3.0.5.RELEASE</org.springframework.version>
-		<hibernate.annotations.version>3.4.0.GA</hibernate.annotations.version>
-		<hibernate.version>3.3.2.GA</hibernate.version>
-		<mavenBuildTimestamp>${maven.build.timestamp}</mavenBuildTimestamp>
-		<maven.build.timestamp.format>dd/MM/yyyy-HH:mm:ss</maven.build.timestamp.format>
-		<env>DEV</env>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -36,33 +28,14 @@
 	</dependencies>
 	<build>
 		<finalName>IMDB</finalName>
-		<filters>
-			<filter>src/main/resources/mf_${env}.properties</filter>
-		</filters>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<excludes>
-					<exclude>*.properties</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
-				<includes>
-					<include>mf_${env}.properties</include>
-				</includes>
 			</resource>
 			<resource>
-				<directory>src/main/java</directory>
+				<directory>src/main/filtered-resources</directory>
 				<filtering>true</filtering>
-				<includes>
-					<include>**</include>
-				</includes>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
 			</resource>
 		</resources>
 		<testResources>
