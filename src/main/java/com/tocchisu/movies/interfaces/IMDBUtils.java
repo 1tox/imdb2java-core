@@ -18,7 +18,7 @@ public class IMDBUtils {
 	 * @throws IOException
 	 */
 	public static File downloadInterfaces(File targetDirectory) throws IOException {
-		File destinationFile = new File(targetDirectory, "movies.txt");
+		File destinationFile = new File(targetDirectory, "movies.list");
 		FileUtils.copyURLToFile(new URL(IMDB_INTERFACES_URL), destinationFile);
 		return destinationFile;
 	}
