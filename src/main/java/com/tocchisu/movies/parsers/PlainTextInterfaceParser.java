@@ -20,18 +20,19 @@ public abstract class PlainTextInterfaceParser<T extends Serializable> {
 	protected static final DateFormat	YEAR_DATE_FORMAT	= new SimpleDateFormat("yyyy");
 	private File						file;
 	private long						currentLineNumber;
+	private Pattern						pattern;
 
 	protected PlainTextInterfaceParser(File file) {
-		if (file == null) {
-			throw new IllegalArgumentException("File must not be empty");
-		}
-		if (file.isDirectory()) {
+		if (file != null && file.isDirectory()) {
 			throw new IllegalArgumentException(file.getAbsolutePath() + " must be a directory");
 		}
 		this.file = file;
 	}
 
 	protected final void read() {
+		if (file == null) {
+			throw new IllegalArgumentException("File must not be empty");
+		}
 		String line = null;
 		BufferedReader bufferedReader = null;
 		Long startTime = new Date().getTime();
@@ -39,20 +40,16 @@ public abstract class PlainTextInterfaceParser<T extends Serializable> {
 			beforeFileParsed();
 			bufferedReader = new BufferedReader(new FileReader(getFile()));
 			int nbParsedObjects = 0;
-			Pattern pattern = Pattern.compile(getLinePattern());
 			while ((line = bufferedReader.readLine()) != null) {
 				currentLineNumber++;
 				LOGGER.info("Parsing L." + currentLineNumber + " : " + line);
-				Matcher matcher = pattern.matcher(line);
-				if (matcher.find()) {
-					beforeLineParsed();
-					T t = parseLine(matcher, line, currentLineNumber);
+				if (parseLine(line) != null) {
 					nbParsedObjects++;
-					afterLineParsed(t);
 				}
 				else {
 					LOGGER.warn("Unparsable line " + currentLineNumber + " : -->" + line + "<--");
 				}
+
 			}
 			LOGGER.info(nbParsedObjects + " objects parsed");
 		}
@@ -77,6 +74,19 @@ public abstract class PlainTextInterfaceParser<T extends Serializable> {
 			}
 			afterFileParsed();
 			LOGGER.info("Treatment duration : " + (new Date().getTime() - startTime) + " ms");
+		}
+	}
+
+	private T parseLine(String line) {
+		Matcher matcher = getPattern().matcher(line);
+		if (matcher.find()) {
+			beforeLineParsed();
+			T t = parseLine(matcher, line, currentLineNumber);
+			afterLineParsed(t);
+			return t;
+		}
+		else {
+			return null;
 		}
 	}
 
@@ -106,6 +116,13 @@ public abstract class PlainTextInterfaceParser<T extends Serializable> {
 
 	protected Date getDate(String date, DateFormat dateFormat) throws ParseException {
 		return date == null ? null : dateFormat.parse(date);
+	}
+
+	protected final Pattern getPattern() {
+		if (pattern == null) {
+			pattern = Pattern.compile(getLinePattern());
+		}
+		return pattern;
 	}
 
 }

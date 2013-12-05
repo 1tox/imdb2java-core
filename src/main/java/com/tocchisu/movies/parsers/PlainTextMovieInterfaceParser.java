@@ -76,7 +76,7 @@ public class PlainTextMovieInterfaceParser extends PlainTextInterfaceParser<Movi
 	}
 
 	@Override
-	protected String getLinePattern() {
+	protected final String getLinePattern() {
 		final String MOVIE_NAME_PATTERN = "(.+?)";
 		final String RELEASE_DATE_PATTERN = "\\s\\((?:(?:(\\d{4})||\\?{4})(?:/[IXV]+)?\\)?)\\)";
 		final String TV_PATTERN = "(?:\\s\\((?:(?:V)||(?:TV)||(?:VG))\\))?";

@@ -1,13 +1,16 @@
 package com.tocchisu.movies.parsers;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import static junit.framework.Assert.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
-import com.tocchisu.movies.parsers.PlainTextMovieInterfaceParser;
-
+@RunWith(PowerMockRunner.class)
 public class PlainTextMovieInterfaceParserTest {
 
-	public static void main(String[] args) {
+	@Test
+	public void testParseLine() throws Exception {
 		String t1 = "\"Alfred J. Kwak\" (1989)					1989-????	(52 episodes)";
 		String t2 = "\"Bente - En barrierekvinde\" (2001)			2001	(unreleased)";
 		String t3 = "\"Big Brother\" (2000/IV)					2000-????";
@@ -15,36 +18,14 @@ public class PlainTextMovieInterfaceParserTest {
 		String t5 = "\"A tortas con la vida\" (????) {A tortas con el amor (#2.11)}	2010-2012";
 		String t6 = "\"A tortas con la vida\" (2005) {A tortas con el amor (2010-12-03)}	????-2010";
 		String t7 = "#1 (2010/I) (VG)						2010";
-		print(getRexexp().matcher(t1));
-		print(getRexexp().matcher(t2));
-		print(getRexexp().matcher(t3));
-		print(getRexexp().matcher(t4));
-		print(getRexexp().matcher(t5));
-		print(getRexexp().matcher(t6));
-		print(getRexexp().matcher(t7));
-
-		// matcher = getRexexp().matcher(t6);
-		// print(matcher);
-		// print(Pattern.compile("(?:(\\d{4})||\\?{4})(?:-(?:(\\d{4})||\\?{4}))?").matcher("????"));
-		// print(Pattern.compile("(?:(\\d{4})||\\?{4})(?:-(?:(\\d{4})||\\?{4}))?").matcher("2001-????"));
-		// print(Pattern.compile("(?:(\\d{4})||\\?{4})(?:-(?:(\\d{4})||\\?{4}))?").matcher("????-????"));
-		// print(Pattern.compile("(?:(\\d{4})||\\?{4})(?:-(?:(\\d{4})||\\?{4}))?").matcher("????-2010"));
+		PlainTextMovieInterfaceParser spy = new PlainTextMovieInterfaceParser(null);
+		testLines(spy, t1, t2, t3, t4, t5, t6, t7);
 
 	}
 
-	private static void print(Matcher matcher) {
-		System.out.println("**** " + matcher.lookingAt() + " ********");
-		if (matcher.matches()) {
-			int groupCount = matcher.groupCount();
-			for (int i = 1; i <= groupCount; i++) {
-				System.out.println(i + ":" + matcher.group(i));
-			}
+	private void testLines(PlainTextMovieInterfaceParser testedObject, String... lineToTests) throws Exception {
+		for (String lineToTest : lineToTests) {
+			assertNotNull(Whitebox.invokeMethod(testedObject, "parseLine", lineToTest));
 		}
-	}
-
-	String s = "(?:\\{(.+)(?:\\((.+)\\))?\\})?";
-
-	private static Pattern getRexexp() {
-		return Pattern.compile(new PlainTextMovieInterfaceParser(null).getLinePattern());
 	}
 }
