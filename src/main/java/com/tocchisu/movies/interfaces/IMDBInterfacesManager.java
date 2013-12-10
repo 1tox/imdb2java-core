@@ -14,8 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * Utilities class for managing IMDB interfaces
- * 
+ * IMDB regularly provides plain text data files, called "interfaces", that stores useful informations about movies, actors, genre, ratings, etc. These files,
+ * can be held locally by downloading them at <a href="http://www.imdb.com/interfaces">http://www.imdb.com/interfaces</a>.
+ * This class provides utilities methods for managing IMDB interfaces, such like downloading interfaces, unzipping them, etc.
  */
 public class IMDBInterfacesManager {
 	/**
