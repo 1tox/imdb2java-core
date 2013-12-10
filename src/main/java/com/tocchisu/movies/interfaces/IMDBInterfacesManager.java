@@ -13,17 +13,23 @@ import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
 
+/**
+ * Utilities class for managing IMDB interfaces
+ * 
+ */
 public class IMDBInterfacesManager {
 	/**
 	 * URL for downloading plain text interfaces
 	 */
 	private static final String	IMDB_INTERFACE_URL	= "{0}/{1}.list.gz";
+
 	// Mirrors for FTP downloads
 	private static final String	DE_MIRROR			= "ftp://ftp.fu-berlin.de/pub/misc/movies/database";
 	@SuppressWarnings("unused")
 	private static final String	FI_MIRROR			= "ftp://ftp.funet.fi/pub/mirrors/ftp.imdb.com/pub";
 	@SuppressWarnings("unused")
 	private static final String	SW_MIRROR			= "ftp://ftp.sunet.se/pub/tv+movies/imdb";
+	private static final String	DEFAULT_MIRROR		= DE_MIRROR;
 
 	private IMDBInterfacesManager() {}
 
@@ -35,9 +41,12 @@ public class IMDBInterfacesManager {
 	 */
 
 	public static File download(String interfaceName, File destinationDirectory) throws IOException {
-		File destinationFile = new File(destinationDirectory, interfaceName + ".list");
-		FileUtils.copyURLToFile(getSourceURL(interfaceName), destinationFile);
-		return unGzip(destinationFile);
+		File destinationFile = new File(destinationDirectory, interfaceName + ".list.gz");
+		URL sourceURL = getSourceURL(interfaceName);
+		FileUtils.copyURLToFile(sourceURL, destinationFile);
+		File unzippedFile = unGzip(destinationFile);
+		destinationFile.delete();
+		return unzippedFile;
 	}
 
 	private static File unGzip(File sourceFile) throws IOException {
@@ -72,6 +81,6 @@ public class IMDBInterfacesManager {
 	}
 
 	private static URL getSourceURL(String interfaceName) throws MalformedURLException {
-		return new URL(MessageFormat.format(IMDB_INTERFACE_URL, DE_MIRROR, interfaceName));
+		return new URL(MessageFormat.format(IMDB_INTERFACE_URL, DEFAULT_MIRROR, interfaceName));
 	}
 }
