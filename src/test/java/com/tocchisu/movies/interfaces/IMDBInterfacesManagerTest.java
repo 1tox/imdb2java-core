@@ -3,9 +3,10 @@ package com.tocchisu.movies.interfaces;
 import static junit.framework.Assert.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -13,7 +14,21 @@ import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
 public class IMDBInterfacesManagerTest {
-	public void testDownloadInterfaces() {}
+	public void testDownloadInterfaces() throws IOException {
+		File destinationDirectory = new File(System.getProperty("java.io.tmpdir"));
+		IMDBInterfacesManager.download("iso-aka-titles", destinationDirectory, new DownloadListener() {
+
+			@Override
+			public void beforeDownload(Long fileSize) {
+				System.out.println(FileUtils.byteCountToDisplaySize(fileSize));
+			}
+
+			@Override
+			public void onProgress(Long bytesCount) {
+				System.out.println(FileUtils.byteCountToDisplaySize(bytesCount));
+			}
+		});
+	}
 
 	@Test
 	public void testUnGzip() throws Exception {
@@ -40,7 +55,7 @@ public class IMDBInterfacesManagerTest {
 		File unzippedFile = Whitebox.invokeMethod(IMDBInterfacesManager.class, "unGzip", destinationFile);
 		assertNotNull(unzippedFile);
 		assertEquals("iso-aka-titles.list", unzippedFile.getName());
-		assertTrue(IOUtil.toString(new FileInputStream(unzippedFile)).startsWith("CRC: 0x8D08329F"));
+		assertTrue(IOUtils.toString(new FileInputStream(unzippedFile)).startsWith("CRC: 0x8D08329F"));
 	}
 
 	@Test

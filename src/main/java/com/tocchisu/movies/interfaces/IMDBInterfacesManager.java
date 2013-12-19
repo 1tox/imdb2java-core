@@ -1,5 +1,7 @@
 package com.tocchisu.movies.interfaces;
 
+import static org.apache.commons.io.FileUtils.*;
+import static org.apache.commons.io.IOUtils.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,10 +10,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * IMDB regularly provides plain text data files, called "interfaces", that stores useful informations about movies, actors, genre, ratings, etc. These files,
@@ -22,15 +25,16 @@ public class IMDBInterfacesManager {
 	/**
 	 * URL for downloading plain text interfaces
 	 */
-	private static final String	IMDB_INTERFACE_URL	= "{0}/{1}.list.gz";
+	private static final String	IMDB_INTERFACE_URL			= "{0}/{1}.list.gz";
+	private static final String	IMDB_INTERFACE_FILE_NAME	= "{0}.list.gz";
 
 	// Mirrors for FTP downloads
-	private static final String	DE_MIRROR			= "ftp://ftp.fu-berlin.de/pub/misc/movies/database";
+	private static final String	DE_MIRROR					= "ftp://ftp.fu-berlin.de/pub/misc/movies/database";
 	@SuppressWarnings("unused")
-	private static final String	FI_MIRROR			= "ftp://ftp.funet.fi/pub/mirrors/ftp.imdb.com/pub";
+	private static final String	FI_MIRROR					= "ftp://ftp.funet.fi/pub/mirrors/ftp.imdb.com/pub";
 	@SuppressWarnings("unused")
-	private static final String	SW_MIRROR			= "ftp://ftp.sunet.se/pub/tv+movies/imdb";
-	private static final String	DEFAULT_MIRROR		= DE_MIRROR;
+	private static final String	SW_MIRROR					= "ftp://ftp.sunet.se/pub/tv+movies/imdb";
+	private static final String	DEFAULT_MIRROR				= DE_MIRROR;
 
 	private IMDBInterfacesManager() {}
 
@@ -41,10 +45,33 @@ public class IMDBInterfacesManager {
 	 * @throws IOException
 	 */
 
-	public static File download(String interfaceName, File destinationDirectory) throws IOException {
-		File destinationFile = new File(destinationDirectory, interfaceName + ".list.gz");
+	public static File download(String interfaceName, File destinationDirectory, final DownloadListener listener) throws IOException {
+		File destinationFile = new File(destinationDirectory, MessageFormat.format(IMDB_INTERFACE_FILE_NAME, interfaceName));
 		URL sourceURL = getSourceURL(interfaceName);
-		FileUtils.copyURLToFile(sourceURL, destinationFile);
+		URLConnection urlConnection = sourceURL.openConnection();
+		String headerField = urlConnection.getHeaderField("Content-Length");
+		listener.beforeDownload(StringUtils.isBlank(headerField) ? 0 : Long.parseLong(headerField));
+		CountingInputStream input = new CountingInputStream(urlConnection.getInputStream()) {
+
+			@Override
+			protected synchronized void afterRead(int n) {
+				listener.onProgress(getByteCount());
+			}
+
+		};
+		try {
+			// Checks
+			FileOutputStream output = openOutputStream(destinationFile);
+			try {
+				copy(input, output);
+			}
+			finally {
+				closeQuietly(output);
+			}
+		}
+		finally {
+			closeQuietly(input);
+		}
 		File unzippedFile = unGzip(destinationFile);
 		destinationFile.delete();
 		return unzippedFile;
