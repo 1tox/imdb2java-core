@@ -16,7 +16,7 @@ import org.powermock.reflect.Whitebox;
 public class IMDBInterfacesManagerTest {
 	public void testDownloadInterfaces() throws IOException {
 		File destinationDirectory = new File(System.getProperty("java.io.tmpdir"));
-		IMDBInterfacesManager.download("iso-aka-titles", destinationDirectory, new DownloadListener() {
+		IMDBInterfacesManager.download("iso-aka-titles", destinationDirectory, new DownloadStatusListener() {
 
 			@Override
 			public void beforeDownload(Long fileSize) {
@@ -24,8 +24,13 @@ public class IMDBInterfacesManagerTest {
 			}
 
 			@Override
-			public void onProgress(Long bytesCount) {
+			public void onProgress(Long bytesCount, Long fileSize) {
 				System.out.println(FileUtils.byteCountToDisplaySize(bytesCount));
+			}
+
+			@Override
+			public void afterDownload(Long bytesCount, Long fileSize, File destinationFile) {
+
 			}
 		});
 	}
