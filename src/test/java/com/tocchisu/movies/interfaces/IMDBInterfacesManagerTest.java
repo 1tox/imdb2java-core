@@ -14,7 +14,7 @@ import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
 public class IMDBInterfacesManagerTest {
-	public void testDownloadInterfaces() throws IOException {
+	public void testDownloadInterfaces() throws IOException, FileAlreadyDownloaded {
 		File destinationDirectory = new File(System.getProperty("java.io.tmpdir"));
 		IMDBInterfacesManager.download("iso-aka-titles", destinationDirectory, new DownloadStatusListener() {
 
