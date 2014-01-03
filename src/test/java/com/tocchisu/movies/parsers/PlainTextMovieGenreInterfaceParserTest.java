@@ -1,28 +1,24 @@
 package com.tocchisu.movies.parsers;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.text.SimpleDateFormat;
+import org.junit.Test;
+import com.tocchisu.movies.objects.Genre;
+import com.tocchisu.movies.objects.Movie;
 
-import com.tocchisu.movies.parsers.PlainTextMovieGenreInterfaceParser;
-
-public class PlainTextMovieGenreInterfaceParserTest {
-	public static void main(String[] args) {
-		printGroups(getRexexp().matcher("\"Artworks Scotland\" (2004)				Documentary"));
-		printGroups(getRexexp().matcher("\"#1 Single\" (2006)					Reality-TV"));
-
-	}
-
-	private static void printGroups(Matcher matcher) {
-		System.out.println("************");
-		if (matcher.matches()) {
-			int groupCount = matcher.groupCount();
-			for (int i = 1; i <= groupCount; i++) {
-				System.out.println(i + ":" + matcher.group(i));
-			}
-		}
-	}
-
-	private static Pattern getRexexp() {
-		return Pattern.compile(new PlainTextMovieGenreInterfaceParser(null).getLinePattern());
+public class PlainTextMovieGenreInterfaceParserTest extends AbstractParserTest<Movie> {
+	@Test
+	public void testParseLine() throws Exception {
+		PlainTextMovieGenreInterfaceParser parser = new PlainTextMovieGenreInterfaceParser();
+		Movie expectedObject = new Movie();
+		expectedObject.setName("Artworks Scotland");
+		SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+		expectedObject.setReleaseDate(yearFormat.parse("2004"));
+		Genre genre = new Genre("Documentary");
+		expectedObject.setGenre(genre);
+		testParser(parser, "\"Artworks Scotland\" (2004)				Documentary", expectedObject);
+		expectedObject.setName("#1 Single");
+		expectedObject.setReleaseDate(yearFormat.parse("2006"));
+		genre.setName("Reality-TV");
+		testParser(parser, "\"#1 Single\" (2006)					Reality-TV", expectedObject);
 	}
 }

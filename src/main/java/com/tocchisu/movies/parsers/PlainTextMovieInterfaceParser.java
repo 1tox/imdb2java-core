@@ -1,6 +1,5 @@
 package com.tocchisu.movies.parsers;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
@@ -12,17 +11,13 @@ import com.tocchisu.movies.objects.Movie;
 
 public class PlainTextMovieInterfaceParser extends PlainTextInterfaceParser<Movie> {
 
-	private final static Logger				LOGGER				= LoggerFactory.getLogger(PlainTextMovieInterfaceParser.class);
-	private final Set<String>				distinctMovieType	= new HashSet<String>();
-	private final Set<String>				distinctCommentary	= new HashSet<String>();
-	private static final SimpleDateFormat	EPISODE_DATE_FORMAT	= new SimpleDateFormat("yyyy-MM-dd");
-
-	public PlainTextMovieInterfaceParser(File file) {
-		super(file);
-	}
+	private final static Logger		LOGGER				= LoggerFactory.getLogger(PlainTextMovieInterfaceParser.class);
+	private final Set<String>		distinctMovieType	= new HashSet<String>();
+	private final Set<String>		distinctCommentary	= new HashSet<String>();
+	static final SimpleDateFormat	EPISODE_DATE_FORMAT	= new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
-	public Movie parseLine(Matcher matcher, String line, Long lineNumber) {
+	final protected Movie parseLine(Matcher matcher, String line, Long lineNumber) {
 		return assembleMovie(matcher, line, lineNumber);
 	}
 
@@ -77,7 +72,7 @@ public class PlainTextMovieInterfaceParser extends PlainTextInterfaceParser<Movi
 
 	@Override
 	protected final String getLinePattern() {
-		final String MOVIE_NAME_PATTERN = "(.+?)";
+		final String MOVIE_NAME_PATTERN = "\".+\"";
 		final String RELEASE_DATE_PATTERN = "\\s\\((?:(?:(\\d{4})||\\?{4})(?:/[IXV]+)?\\)?)\\)";
 		final String TV_PATTERN = "(?:\\s\\((?:(?:V)||(?:TV)||(?:VG))\\))?";
 		final String EPISODE_PATTERN = "(?:\\s+\\{(.+?)?(?:\\s+\\((?:#(?:(\\d+?)\\.(\\d+?)))?(\\d{4}-\\d{2}-\\d{2})?\\))?\\})?";

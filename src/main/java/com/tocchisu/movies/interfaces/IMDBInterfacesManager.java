@@ -50,8 +50,8 @@ public class IMDBInterfacesManager {
 	 * @throws IOException
 	 */
 	public static File download(String interfaceName, File destinationDirectory, DownloadStatusListener listener) throws IOException, FileAlreadyDownloaded {
-		File zippedFile = getZippedFile(interfaceName, destinationDirectory);
-		File unzippedFile = getUnzippedFile(zippedFile);
+		File zippedFile = createZippedFile(interfaceName, destinationDirectory);
+		File unzippedFile = createUnzippedFile(zippedFile);
 		if (unzippedFile.exists()) {
 			throw new FileAlreadyDownloaded(unzippedFile);
 		}
@@ -59,7 +59,7 @@ public class IMDBInterfacesManager {
 	}
 
 	public static File reDownload(String interfaceName, File destinationDirectory, DownloadStatusListener listener) throws IOException {
-		File zippedFile = getZippedFile(interfaceName, destinationDirectory);
+		File zippedFile = createZippedFile(interfaceName, destinationDirectory);
 		return download(interfaceName, listener, zippedFile);
 	}
 
@@ -98,12 +98,7 @@ public class IMDBInterfacesManager {
 		return unzippedFile;
 	}
 
-	/**
-	 * @param interfaceName
-	 * @param destinationDirectory
-	 * @return
-	 */
-	private static File getZippedFile(String interfaceName, File destinationDirectory) {
+	private static File createZippedFile(String interfaceName, File destinationDirectory) {
 		return new File(destinationDirectory, MessageFormat.format(IMDB_INTERFACE_FILE_NAME, interfaceName));
 	}
 
@@ -115,12 +110,12 @@ public class IMDBInterfacesManager {
 			throw new IllegalArgumentException(MessageFormat.format("{0} is a directory file. You have to provide a file instead.", sourceFile));
 		}
 		GZIPInputStream fis = new GZIPInputStream(new FileInputStream(sourceFile));
-		File destinationFile = getUnzippedFile(sourceFile);
+		File destinationFile = createUnzippedFile(sourceFile);
 		FileUtils.copyInputStreamToFile(fis, destinationFile);
 		return destinationFile;
 	}
 
-	private static File getUnzippedFile(File zippedFile) {
+	private static File createUnzippedFile(File zippedFile) {
 		return new File(zippedFile.getParentFile(), StringUtils.substringBeforeLast(zippedFile.getName(), "."));
 	}
 

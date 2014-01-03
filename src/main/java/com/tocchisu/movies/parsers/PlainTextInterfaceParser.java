@@ -16,18 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class PlainTextInterfaceParser<T extends Serializable> {
-	private final static Logger			LOGGER				= LoggerFactory.getLogger(PlainTextInterfaceParser.class);
-	protected static final DateFormat	YEAR_DATE_FORMAT	= new SimpleDateFormat("yyyy");
-	private File						file;
-	private long						currentLineNumber;
-	private Pattern						pattern;
-
-	protected PlainTextInterfaceParser(File file) {
-		if (file != null && file.isDirectory()) {
-			throw new IllegalArgumentException(file.getAbsolutePath() + " must be a directory");
-		}
-		this.file = file;
-	}
+	private final static Logger	LOGGER				= LoggerFactory.getLogger(PlainTextInterfaceParser.class);
+	static final DateFormat		YEAR_DATE_FORMAT	= new SimpleDateFormat("yyyy");
+	private File				file;
+	private long				currentLineNumber;
+	private Pattern				pattern;
 
 	protected final void read() {
 		if (file == null) {
@@ -96,7 +89,10 @@ public abstract class PlainTextInterfaceParser<T extends Serializable> {
 		return file;
 	}
 
-	public final void setFile(File file) {
+	private final void setFile(File file) {
+		if (file != null && file.isDirectory()) {
+			throw new IllegalArgumentException(file.getAbsolutePath() + " must be a directory");
+		}
 		this.file = file;
 	}
 
@@ -108,7 +104,8 @@ public abstract class PlainTextInterfaceParser<T extends Serializable> {
 
 	protected void afterLineParsed(@SuppressWarnings("unused") T t) {}
 
-	public void parse() {
+	public void parse(File file) {
+		setFile(file);
 		read();
 	}
 
