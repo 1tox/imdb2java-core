@@ -10,3 +10,6 @@ This project provides :
 <li>parsers for converting <i>interfaces</i> into Java objects. It's a first step before inserting these objects into any kind of database</li>
 </ul>
 </p>
+<p>
+Information courtesy of IMDb (http://www.imdb.com).
+</p>
