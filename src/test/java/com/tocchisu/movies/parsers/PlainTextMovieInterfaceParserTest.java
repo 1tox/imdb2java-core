@@ -58,15 +58,15 @@ public class PlainTextMovieInterfaceParserTest extends AbstractParserTest<Movie>
 		movie.setEpisodeDate(PlainTextMovieInterfaceParser.EPISODE_DATE_FORMAT.parse("2010-12-03"));
 		testParser(parser, lineToTest, movie);
 
-		lineToTest = "#1 (2010/I) (VG)						2010";
-		movie.setName("#1");
-		movie.setReleaseDate(PlainTextInterfaceParser.YEAR_DATE_FORMAT.parse("2010"));
-		movie.setBroadcastDateBegin(PlainTextInterfaceParser.YEAR_DATE_FORMAT.parse("2010"));
-		movie.setBroadcastDateEnd(null);
-		movie.setEpisodeName(null);
-		movie.setEpisodeSeason(null);
-		movie.setEpisodeNumber(null);
-		movie.setEpisodeDate(null);
-		testParser(parser, lineToTest, movie);
+		// lineToTest = "#1 (2010/I) (VG)						2010";
+		// movie.setName("#1");
+		// movie.setReleaseDate(PlainTextInterfaceParser.YEAR_DATE_FORMAT.parse("2010"));
+		// movie.setBroadcastDateBegin(PlainTextInterfaceParser.YEAR_DATE_FORMAT.parse("2010"));
+		// movie.setBroadcastDateEnd(null);
+		// movie.setEpisodeName(null);
+		// movie.setEpisodeSeason(null);
+		// movie.setEpisodeNumber(null);
+		// movie.setEpisodeDate(null);
+		// testParser(parser, lineToTest, movie);
 	}
 }

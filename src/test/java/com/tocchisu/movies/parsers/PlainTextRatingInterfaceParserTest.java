@@ -6,7 +6,11 @@ import com.tocchisu.movies.objects.Rating;
 public class PlainTextRatingInterfaceParserTest extends AbstractParserTest<Rating> {
 	@Test
 	public void testParseLine() throws Exception {
-		testParser(new PlainTextRatingInterfaceParser(), "      0.00022000      43   6.2  Up Up and Away (1989)",
-				"      10.0002.03      19   6.7  Julia Roberts: An American Cinematheque Tribute (2007) (TV)");
+		Rating rating = new Rating();
+		rating.setMovie("Julia Roberts: An American Cinematheque Tribute (2007) (TV)");
+		rating.setNumberOfVotes(19);
+		rating.setRank(6.7f);
+		rating.setDistribution(new int[] { 1, 0, 0, 0, 0, 0, 2, 0, 0, });
+		testParser(new PlainTextRatingInterfaceParser(), "      10.0002.03      19   6.7  Julia Roberts: An American Cinematheque Tribute (2007) (TV)", rating);
 	}
 }
